@@ -411,6 +411,16 @@
       text-align:center;
       padding: 8px 0 2px;
     }
+
+    /* ✅ Back to Main Menu (bottom centre, non-blocking) */
+    #mainMenuBtn{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: calc(10px + env(safe-area-inset-bottom));
+      z-index: 10;
+      white-space: nowrap;
+    }
   </style>
 </head>
 
@@ -582,6 +592,9 @@
       </div>
     </div>
   </div>
+
+  <!-- ✅ Back to Main Menu button (bottom centre) -->
+  <button class="btn" id="mainMenuBtn" type="button" aria-label="Back to main menu">⬅ Back to Main Menu</button>
 
 <script>
 /* =========================
@@ -1100,7 +1113,29 @@ els.restartFromResults.addEventListener("click", restartAll);
 loadQuestion(0);
 updateSideUI();
 </script>
+
+<script>
+/* ✅ Back to Main Menu wiring + reserve space so it won't block anything */
+(function(){
+  const MAIN_MENU_URL = "https://limkimsze-maker.github.io/P3_Mental_Sum_Challenge/";
+  const btn = document.getElementById("mainMenuBtn");
+  const wrap = document.querySelector(".wrap");
+  if(btn){
+    btn.addEventListener("click", ()=>{ window.location.href = MAIN_MENU_URL; });
+  }
+  function reserveSpace(){
+    if(!btn || !wrap) return;
+    const cs = getComputedStyle(wrap);
+    const pb = parseFloat(cs.paddingBottom) || 0;
+    const bh = btn.getBoundingClientRect().height || 0;
+    // add enough bottom padding so the fixed button never covers content
+    wrap.style.paddingBottom = (pb + bh + 18) + "px";
+  }
+  window.addEventListener("resize", ()=>requestAnimationFrame(reserveSpace));
+  reserveSpace();
+})();
+</script>
+
   <script src="https://limkimsze-maker.github.io/assets/nav.js"></script>
 </body>
 </html>
-
